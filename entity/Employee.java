@@ -1,3 +1,5 @@
+package entity;
+
 public class Employee {
     private int empId;
     private String name;
@@ -19,7 +21,7 @@ public class Employee {
         return empId;
     }
 
-     public void setEmpId(int empId) {
+    public void setEmpId(int empId) {
         this.empId = empId;
     }
 
@@ -61,5 +63,10 @@ public class Employee {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    @Override
+    public String toString() {
+        return empId + " | " + name + " | " + age + " | " + gender + " | " + role.getRoleName() + " | " + department.getDepName();
     }
 }

@@ -1,3 +1,5 @@
+package entity;
+
 public class Department {
     private int depId;
     private String depName;
@@ -19,7 +21,12 @@ public class Department {
         return depName;
     }
 
-    public void setDepName() {
+    public void setDepName(String depName) {
         this.depName = depName;
+    }
+
+    @Override
+    public String toString() {
+        return depId + " - " + depName;
     }
 }
