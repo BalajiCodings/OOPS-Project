@@ -1,12 +1,13 @@
 package dao;
 
+import entity.Department;
 import entity.Employee;
 import entity.Role;
-import entity.Department;
 import java.sql.*;
 import java.util.*;
 
 public class EmployeeDAO implements DAO<Employee> {
+
     @Override
     public void insert(Employee e) {
         String sql = "INSERT INTO employee(name, age, gender, roleId, depId) VALUES (?, ?, ?, ?, ?)";
@@ -50,7 +51,7 @@ public class EmployeeDAO implements DAO<Employee> {
 
     @Override
     public void update(Employee e) {
-        String sql = "UPDATE employee SET name=?, age=?, gender=?, roleId=?, depId=? WHERE empId=?";
+        String sql = "UPDATE employee SET name = ?, age = ?, gender = ?, roleId = ?, depId = ? WHERE empId = ?";
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, e.getName());
@@ -102,10 +103,13 @@ public class EmployeeDAO implements DAO<Employee> {
         return list;
     }
 
-    // New: Search by name or department
     public List<Employee> search(String keyword) {
         List<Employee> list = new ArrayList<>();
-        String sql = "SELECT * FROM employee e JOIN department d ON e.depId = d.depId WHERE e.name LIKE ? OR d.depName LIKE ?";
+        String sql = """
+            SELECT * FROM employee e
+            JOIN department d ON e.depId = d.depId
+            WHERE e.name LIKE ? OR d.depName LIKE ?
+        """;
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, "%" + keyword + "%");

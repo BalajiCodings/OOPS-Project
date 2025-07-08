@@ -19,31 +19,36 @@ public class Attendance {
         return attId;
     }
 
-    public void setAttId(int attId) {
-        this.attId = attId;
-    }
-
     public LocalDate getDate() {
         return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public Employee getEmployee() {
         return employee;
     }
 
+    public void setAttId(int attId) {
+        this.attId = attId;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public void setEmployee(Employee employee) {
         this.employee = employee;
+    }
+
+    @Override
+    public String toString() {
+        return attId + " - " + date + " - " + status + " - " + employee.getName();
     }
 }

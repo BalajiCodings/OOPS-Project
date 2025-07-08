@@ -4,20 +4,26 @@ import dao.UserDAO;
 import java.util.Scanner;
 
 public class AuthMenu {
-    private Scanner sc = new Scanner(System.in);
-    private UserDAO userDao = new UserDAO();
+
+    private final UserDAO userDAO = new UserDAO();
+    private final Scanner scanner = new Scanner(System.in);
 
     public boolean login() {
-        System.out.println("--- Login ---");
+        System.out.println("=== Employee Management System ===");
+
         System.out.print("Username: ");
-        String username = sc.nextLine();
+        String username = scanner.nextLine();
+
         System.out.print("Password: ");
-        String password = sc.nextLine();
-        if (userDao.authenticate(username, password)) {
-            System.out.println("Login successful.");
+        String password = scanner.nextLine();
+
+        boolean isAuthenticated = userDAO.authenticate(username, password);
+
+        if (isAuthenticated) {
+            System.out.println("Login successful. Welcome, " + username + "!");
             return true;
         } else {
-            System.out.println("Invalid credentials.");
+            System.out.println("Login failed. Invalid credentials.");
             return false;
         }
     }

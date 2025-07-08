@@ -13,12 +13,12 @@ public class Department {
         return depId;
     }
 
-    public void setDepId(int depId) {
-        this.depId = depId;
-    }
-
     public String getDepName() {
         return depName;
+    }
+
+    public void setDepId(int depId) {
+        this.depId = depId;
     }
 
     public void setDepName(String depName) {

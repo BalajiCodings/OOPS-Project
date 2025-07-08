@@ -5,71 +5,58 @@ import java.sql.*;
 import java.util.*;
 
 public class DepartmentDAO implements DAO<Department> {
-    @Override
     public void insert(Department d) {
-        String sql = "INSERT INTO department(depName) VALUES (?)";
         try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement("INSERT INTO department(depName) VALUES (?)")) {
             ps.setString(1, d.getDepName());
             ps.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Error inserting department: " + e.getMessage());
+            System.out.println("Insert Error: " + e.getMessage());
         }
     }
 
-    @Override
     public Department getById(int id) {
-        String sql = "SELECT * FROM department WHERE depId = ?";
         try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement("SELECT * FROM department WHERE depId = ?")) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return new Department(rs.getInt("depId"), rs.getString("depName"));
-            }
+            if (rs.next()) return new Department(rs.getInt("depId"), rs.getString("depName"));
         } catch (SQLException e) {
-            System.out.println("Error fetching department: " + e.getMessage());
+            System.out.println("Get Error: " + e.getMessage());
         }
         return null;
     }
 
-    @Override
     public void update(Department d) {
-        String sql = "UPDATE department SET depName = ? WHERE depId = ?";
         try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement("UPDATE department SET depName=? WHERE depId=?")) {
             ps.setString(1, d.getDepName());
             ps.setInt(2, d.getDepId());
             ps.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Error updating department: " + e.getMessage());
+            System.out.println("Update Error: " + e.getMessage());
         }
     }
 
-    @Override
     public void delete(int id) {
-        String sql = "DELETE FROM department WHERE depId = ?";
         try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement("DELETE FROM department WHERE depId=?")) {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Error deleting department: " + e.getMessage());
+            System.out.println("Delete Error: " + e.getMessage());
         }
     }
 
-    @Override
     public List<Department> getAll() {
         List<Department> list = new ArrayList<>();
-        String sql = "SELECT * FROM department";
         try (Connection con = DBConnection.getConnection();
              Statement st = con.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
-            while (rs.next()) {
+             ResultSet rs = st.executeQuery("SELECT * FROM department")) {
+            while (rs.next())
                 list.add(new Department(rs.getInt("depId"), rs.getString("depName")));
-            }
         } catch (SQLException e) {
-            System.out.println("Error fetching departments: " + e.getMessage());
+            System.out.println("Fetch All Error: " + e.getMessage());
         }
         return list;
     }

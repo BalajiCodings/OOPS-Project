@@ -1,9 +1,10 @@
 package dao;
 
-import java.sql.*;
-import java.util.*;
-import entity.Payroll;
 import entity.Employee;
+import entity.Payroll;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PayrollDAO implements DAO<Payroll> {
 
@@ -12,11 +13,13 @@ public class PayrollDAO implements DAO<Payroll> {
         String query = "INSERT INTO Payroll (payrollId, month, year, netSalary, empId) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
+
             stmt.setInt(1, payroll.getPayrollId());
             stmt.setInt(2, payroll.getMonth());
             stmt.setInt(3, payroll.getYear());
             stmt.setDouble(4, payroll.getNetSalary());
             stmt.setInt(5, payroll.getEmployee().getEmpId());
+
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Error inserting payroll: " + e.getMessage());
@@ -26,19 +29,24 @@ public class PayrollDAO implements DAO<Payroll> {
     @Override
     public Payroll getById(int payrollId) {
         String query = "SELECT * FROM Payroll WHERE payrollId = ?";
-        Payroll payroll = null;
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
+
             stmt.setInt(1, payrollId);
             ResultSet rs = stmt.executeQuery();
+
             if (rs.next()) {
+                int month = rs.getInt("month");
+                int year = rs.getInt("year");
+                double netSalary = rs.getDouble("netSalary");
                 Employee emp = new EmployeeDAO().getById(rs.getInt("empId"));
-                payroll = new Payroll(rs.getInt("payrollId"), rs.getInt("month"), rs.getInt("year"), rs.getDouble("netSalary"), emp);
+
+                return new Payroll(payrollId, month, year, netSalary, emp);
             }
         } catch (SQLException e) {
             System.out.println("Error fetching payroll: " + e.getMessage());
         }
-        return payroll;
+        return null;
     }
 
     @Override
@@ -46,11 +54,13 @@ public class PayrollDAO implements DAO<Payroll> {
         String query = "UPDATE Payroll SET month = ?, year = ?, netSalary = ?, empId = ? WHERE payrollId = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
+
             stmt.setInt(1, payroll.getMonth());
             stmt.setInt(2, payroll.getYear());
             stmt.setDouble(3, payroll.getNetSalary());
             stmt.setInt(4, payroll.getEmployee().getEmpId());
             stmt.setInt(5, payroll.getPayrollId());
+
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Error updating payroll: " + e.getMessage());
@@ -62,6 +72,7 @@ public class PayrollDAO implements DAO<Payroll> {
         String query = "DELETE FROM Payroll WHERE payrollId = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
+
             stmt.setInt(1, payrollId);
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -84,11 +95,13 @@ public class PayrollDAO implements DAO<Payroll> {
                 int year = rs.getInt("year");
                 double netSalary = rs.getDouble("netSalary");
                 Employee emp = new EmployeeDAO().getById(rs.getInt("empId"));
+
                 list.add(new Payroll(payrollId, month, year, netSalary, emp));
             }
         } catch (SQLException e) {
-            System.out.println("Error fetching all payrolls: " + e.getMessage());
+            System.out.println("Error fetching payroll records: " + e.getMessage());
         }
+
         return list;
     }
 }

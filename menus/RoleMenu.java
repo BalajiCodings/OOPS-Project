@@ -1,75 +1,93 @@
-import java.util.*;
-import entity.Employee;
-import entity.Role;
-import entity.Department;
-import dao.EmployeeDAO;
+package menus;
+
 import dao.RoleDAO;
-import dao.DepartmentDAO;s
+import entity.Role;
+
+import java.util.List;
+import java.util.Scanner;
 
 public class RoleMenu {
-    public static void handle(Scanner sc) {
-        RoleDAO dao = new RoleDAO();
 
+    private static final RoleDAO roleDAO = new RoleDAO();
+
+    public static void handle(Scanner sc) {
         while (true) {
             System.out.println("\n--- Role Menu ---");
             System.out.println("1. Add Role");
             System.out.println("2. View Role by ID");
-            System.out.println("3. Update Role Name");
+            System.out.println("3. Update Role");
             System.out.println("4. Delete Role");
-            System.out.println("5. Back");
-            System.out.println("6. List All Roles"); 
+            System.out.println("5. View All Roles");
+            System.out.println("0. Back to Main Menu");
             System.out.print("Choice: ");
+
             int ch = sc.nextInt();
-            sc.nextLine(); 
+            sc.nextLine();
 
             switch (ch) {
-                case 1:
-                    System.out.print("Role ID: ");
-                    int roleId = sc.nextInt();
-                    sc.nextLine();
-                    System.out.print("Role Name: ");
-                    String roleName = sc.nextLine();
-                    dao.insert(new Role(roleId, roleName));
-                    break;
-
-                case 2:
-                    System.out.print("Role ID: ");
-                    Role r = dao.getById(sc.nextInt());
-                    if (r != null)
-                        System.out.println("ID: " + r.getRoleId() + ", Name: " + r.getRoleName());
-                    else
-                        System.out.println("Not found.");
-                    break;
-
-                case 3:
-                    System.out.print("Role ID: ");
-                    int id = sc.nextInt();
-                    sc.nextLine();
-                    System.out.print("New Name: ");
-                    String newName = sc.nextLine();
-                    Role updatedRole = new Role(id, newName);
-                    dao.update(updatedRole);
-                    break;
-
-                case 4:
-                    System.out.print("Role ID: ");
-                    dao.delete(sc.nextInt());
-                    break;
-
-                case 5:
+                case 1 -> addRole(sc);
+                case 2 -> viewById(sc);
+                case 3 -> updateRole(sc);
+                case 4 -> deleteRole(sc);
+                case 5 -> viewAllRoles();
+                case 0 -> {
                     return;
+                }
+                default -> System.out.println("Invalid choice.");
+            }
+        }
+    }
 
+    private static void addRole(Scanner sc) {
+        System.out.print("Enter role name: ");
+        String name = sc.nextLine();
+        roleDAO.insert(new Role(0, name));
+        System.out.println("Role added successfully.");
+    }
 
-                case 6:
-                    List<Role> allRoles = dao.getAll();
-                    for (Role role : allRoles) {
-                        System.out.println("ID: " + role.getRoleId() + ", Name: " + role.getRoleName());
-                    }
-                    break;
+    private static void viewById(Scanner sc) {
+        System.out.print("Enter role ID: ");
+        int id = sc.nextInt();
+        Role r = roleDAO.getById(id);
+        if (r != null) {
+            System.out.println("Role ID: " + r.getRoleId());
+            System.out.println("Role Name: " + r.getRoleName());
+        } else {
+            System.out.println("Role not found.");
+        }
+    }
 
+    private static void updateRole(Scanner sc) {
+        System.out.print("Enter role ID to update: ");
+        int id = sc.nextInt();
+        sc.nextLine();
+        Role existing = roleDAO.getById(id);
+        if (existing != null) {
+            System.out.print("Enter new name: ");
+            String name = sc.nextLine();
+            existing.setRoleName(name);
+            roleDAO.update(existing);
+            System.out.println("Role updated successfully.");
+        } else {
+            System.out.println("Role not found.");
+        }
+    }
 
-                default:
-                    System.out.println("Invalid choice.");
+    private static void deleteRole(Scanner sc) {
+        System.out.print("Enter role ID to delete: ");
+        int id = sc.nextInt();
+        roleDAO.delete(id);
+        System.out.println("Role deleted successfully.");
+    }
+
+    private static void viewAllRoles() {
+        List<Role> list = roleDAO.getAll();
+        if (list.isEmpty()) {
+            System.out.println("No roles found.");
+        } else {
+            System.out.println("All Roles:");
+            for (Role r : list) {
+                System.out.println(r.getRoleId() + " - " + r.getRoleName());
             }
         }
     }
